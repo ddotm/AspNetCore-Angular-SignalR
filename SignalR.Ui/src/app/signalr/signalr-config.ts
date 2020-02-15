@@ -1,4 +1,4 @@
 export class SignalrConfig {
-  public static baseUrl = 'http://localhost:15917/';
+  public static baseUrl = 'https://localhost:44320/';
   public static route = 'msg-hub';
 }

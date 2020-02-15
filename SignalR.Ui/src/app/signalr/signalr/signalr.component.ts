@@ -12,6 +12,7 @@ export class SignalrComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.signalrService.startSignalR();
   }
 
 }

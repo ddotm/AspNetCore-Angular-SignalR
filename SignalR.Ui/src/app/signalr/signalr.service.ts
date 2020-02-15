@@ -13,8 +13,16 @@ export class SignalrService {
 
   private connectionIsEstablished = false;
   private _hubConnection: HubConnection;
+  private connectionAttemptCount: number = 0;
+  private maxConnectionAttempts: number = 3;
 
   constructor() {
+  }
+
+  public startSignalR() {
+    this.createConnection();
+    this.registerOnServerEvents();
+    this.startConnection();
   }
 
   private createConnection() {
@@ -30,15 +38,21 @@ export class SignalrService {
   }
 
   private startConnection(): void {
+    this.connectionAttemptCount++;
     this._hubConnection
         .start()
         .then(() => {
           this.connectionIsEstablished = true;
+          this.connectionAttemptCount = 0;
           console.log('Hub connection started');
           this.connectionEstablished.emit(true);
         })
         .catch(err => {
           console.log('Error while establishing connection, retrying...');
+          if (this.connectionAttemptCount >= this.maxConnectionAttempts) {
+            console.log('Max number of connection attempts exceeded. No more retries.');
+            return;
+          }
           setTimeout(() => {
             this.startConnection();
           }, 5000);
