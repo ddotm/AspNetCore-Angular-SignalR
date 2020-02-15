@@ -25,6 +25,10 @@ export class SignalrService {
     this.startConnection();
   }
 
+  public stopSignalR() {
+    this._hubConnection.stop();
+  }
+
   private createConnection() {
     this._hubConnection = new HubConnectionBuilder()
       .withUrl(SignalrConfig.baseUrl + SignalrConfig.route)
