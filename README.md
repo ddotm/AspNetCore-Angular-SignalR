@@ -32,3 +32,8 @@ git add .
 git commit -m "initial commit"
 git remote add origin [git repo url]
 git push --set-upstream origin master
+
+Add Microsoft.AspNetCore.SignalR
+cd into the project directory
+`dotnet add package Microsoft.AspNetCore.SignalR`
+
