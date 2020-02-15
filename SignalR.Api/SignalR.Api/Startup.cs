@@ -13,6 +13,15 @@ namespace SignalR.API
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddCors(options =>
+			{
+				options.AddPolicy("CorsPolicy", builder => builder
+					.WithOrigins("http://localhost:4200")
+					.AllowAnyMethod()
+					.AllowAnyHeader()
+					.AllowCredentials());
+			});
+
 			services.AddSignalR(options =>
 			{
 				options.EnableDetailedErrors = true;
@@ -29,6 +38,8 @@ namespace SignalR.API
 			}
 
 			app.UseRouting();
+
+			app.UseCors("CorsPolicy");
 
 			app.UseEndpoints(endpoints =>
 			{
