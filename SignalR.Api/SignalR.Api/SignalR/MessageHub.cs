@@ -7,7 +7,7 @@ namespace SignalR.Api.SignalR
 	{
 		public async Task NewMessage(Message msg)
 		{
-			await Clients.All.SendAsync("MessageReceived", msg);
+			await Clients.All.SendAsync("msgReceived", msg);
 		}
 	}
 }
