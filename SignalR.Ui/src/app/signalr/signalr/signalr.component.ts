@@ -1,17 +1,48 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, NgZone, OnInit} from '@angular/core';
+import {SignalrMessage} from '../signalr-message.model';
 import {SignalrService} from '../signalr.service';
 
 @Component({
   selector: 'dlm-signalr',
   templateUrl: './signalr.component.html',
-  styleUrls: ['./signalr.component.scss']
+  styleUrls: ['./signalr.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class SignalrComponent implements OnInit {
 
-  constructor(public signalrService: SignalrService) {
+  private uniqueClientId: string = new Date().getTime()
+                                             .toString(10);
+  public userName: string;
+  public msg: string;
+  public messages: Array<SignalrMessage> = new Array<SignalrMessage>();
+
+  constructor(public signalrService: SignalrService,
+              private _ngZone: NgZone) {
   }
 
   ngOnInit(): void {
+    this.signalrService.startSignalR();
+    this.subscribeToEvents();
   }
 
+  public send() {
+    const message: SignalrMessage = new SignalrMessage();
+    message.clientUniqueId = this.uniqueClientId;
+    message.type = 'send';
+    message.contents = this.msg;
+    message.timestamp = new Date();
+    this.messages.push(message);
+    this.signalrService.sendMsg(message);
+  }
+
+  private subscribeToEvents(): void {
+    this.signalrService.msg$.subscribe((message: SignalrMessage) => {
+      this._ngZone.run(() => {
+        if (message.clientUniqueId !== this.uniqueClientId) {
+          message.type = 'received';
+          this.messages.push(message);
+        }
+      });
+    });
+  }
 }
