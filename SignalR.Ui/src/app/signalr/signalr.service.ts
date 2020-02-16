@@ -9,8 +9,6 @@ import {SignalrMsgType} from './signalr-msg-type';
   providedIn: 'root'
 })
 export class SignalrService {
-  messageReceived = new EventEmitter<SignalrMessage>();
-
   private msgSubject: BehaviorSubject<SignalrMessage> = new BehaviorSubject<SignalrMessage>(new SignalrMessage());
   public msg$: Observable<SignalrMessage> = this.msgSubject.asObservable();
 
@@ -35,7 +33,7 @@ export class SignalrService {
   }
 
   public sendMsg(msg: SignalrMessage): void {
-    this._hubConnection.invoke('NewMessage', msg);
+    this._hubConnection.invoke(SignalrMsgType.NewMessage, msg);
   }
 
   private createConnection() {
@@ -46,7 +44,6 @@ export class SignalrService {
 
   private registerOnServerEvents(): void {
     this._hubConnection.on(SignalrMsgType.MessageReceived, (data: SignalrMessage) => {
-      this.messageReceived.emit(data);
       this.msgSubject.next(data);
     });
   }

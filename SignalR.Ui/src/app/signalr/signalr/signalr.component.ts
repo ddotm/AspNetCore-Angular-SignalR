@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, NgZone, OnInit} from '@angular/core';
+import _ from 'lodash';
 import {SignalrMessage} from '../signalr-message.model';
 import {SignalrService} from '../signalr.service';
 
@@ -27,7 +28,10 @@ export class SignalrComponent implements OnInit {
 
   public send() {
     const message: SignalrMessage = new SignalrMessage();
-    message.clientUniqueId = this.uniqueClientId;
+    message.clientId = this.uniqueClientId;
+    message.messageId = new Date().getTime()
+                                  .toString(10);
+    message.userName = this.userName;
     message.type = 'send';
     message.contents = this.msg;
     message.timestamp = new Date();
@@ -38,10 +42,11 @@ export class SignalrComponent implements OnInit {
   private subscribeToEvents(): void {
     this.signalrService.msg$.subscribe((message: SignalrMessage) => {
       this._ngZone.run(() => {
-        if (message.clientUniqueId !== this.uniqueClientId) {
-          message.type = 'received';
-          this.messages.push(message);
+        if (_.isEmpty(message) || _.isEmpty(message.messageId) || message.clientId === this.uniqueClientId) {
+          return;
         }
+        message.type = 'received';
+        this.messages.push(message);
       });
     });
   }

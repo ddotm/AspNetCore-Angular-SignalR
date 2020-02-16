@@ -28,7 +28,7 @@
     <span>Conversation</span>
     <ul class="list-unstyled">
       <li *ngFor="let message of messages">
-        <span>{{message.contents}}</span>
+        <span>{{message.timestamp | date}} {{message.userName}}: {{message.contents}}</span>
       </li>
     </ul>
   </div>
