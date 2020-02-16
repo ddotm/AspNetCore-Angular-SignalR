@@ -1,3 +1,3 @@
 export enum SignalrMsgType {
-  msgReceived = 'msgReceived'
+  MessageReceived = 'MessageReceived'
 }

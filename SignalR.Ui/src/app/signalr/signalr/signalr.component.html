@@ -4,7 +4,8 @@
     <input id="userName"
            class="form-control"
            type="text"
-           data-lpignore="true"/>
+           data-lpignore="true"
+           [(ngModel)]="userName"/>
 
   </div>
 </div>
@@ -14,8 +15,11 @@
     <input id="msg"
            type="text"
            class="form-control"
-           data-lpignore="true">
-    <button class="btn btn-outline-primary">Send</button>
+           data-lpignore="true"
+           [(ngModel)]="msg">
+    <button class="btn btn-outline-primary"
+            (click)="send()">Send
+    </button>
   </div>
 </div>
 
@@ -23,7 +27,9 @@
   <div class="col-6">
     <span>Conversation</span>
     <ul class="list-unstyled">
-      <li></li>
+      <li *ngFor="let message of messages">
+        <span>{{message.contents}}</span>
+      </li>
     </ul>
   </div>
 </div>

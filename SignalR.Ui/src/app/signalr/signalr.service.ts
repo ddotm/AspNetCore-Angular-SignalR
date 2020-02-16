@@ -1,5 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {HubConnection, HubConnectionBuilder} from '@aspnet/signalr';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {SignalrConfig} from './signalr-config';
 import {SignalrMessage} from './signalr-message.model';
 import {SignalrMsgType} from './signalr-msg-type';
@@ -9,6 +10,10 @@ import {SignalrMsgType} from './signalr-msg-type';
 })
 export class SignalrService {
   messageReceived = new EventEmitter<SignalrMessage>();
+
+  private msgSubject: BehaviorSubject<SignalrMessage> = new BehaviorSubject<SignalrMessage>(new SignalrMessage());
+  public msg$: Observable<SignalrMessage> = this.msgSubject.asObservable();
+
   connectionEstablished = new EventEmitter<boolean>();
 
   private connectionIsEstablished = false;
@@ -29,6 +34,10 @@ export class SignalrService {
     this._hubConnection.stop();
   }
 
+  public sendMsg(msg: SignalrMessage): void {
+    this._hubConnection.invoke('NewMessage', msg);
+  }
+
   private createConnection() {
     this._hubConnection = new HubConnectionBuilder()
       .withUrl(SignalrConfig.baseUrl + SignalrConfig.route)
@@ -36,8 +45,9 @@ export class SignalrService {
   }
 
   private registerOnServerEvents(): void {
-    this._hubConnection.on(SignalrMsgType.msgReceived, (data: SignalrMessage) => {
+    this._hubConnection.on(SignalrMsgType.MessageReceived, (data: SignalrMessage) => {
       this.messageReceived.emit(data);
+      this.msgSubject.next(data);
     });
   }
 

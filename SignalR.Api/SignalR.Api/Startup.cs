@@ -27,6 +27,7 @@ namespace SignalR.API
 				options.EnableDetailedErrors = true;
 				options.MaximumReceiveMessageSize = 2000;
 			});
+			services.AddControllers(options => { });
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +51,7 @@ namespace SignalR.API
 						HttpTransportType.ServerSentEvents |
 						HttpTransportType.LongPolling;
 				});
+				endpoints.MapControllers();
 			});
 		}
 	}
