@@ -16,8 +16,11 @@
            type="text"
            class="form-control"
            data-lpignore="true"
+           (keyup)="msgKeyup($event)"
            [(ngModel)]="msg">
-    <button class="btn btn-outline-primary"
+    <button type="submit"
+            class="btn btn-outline-primary"
+            [disabled]="!dataReadyForSend()"
             (click)="send()">Send
     </button>
   </div>
@@ -28,7 +31,7 @@
     <span>Conversation</span>
     <ul class="list-unstyled">
       <li *ngFor="let message of messages">
-        <span>{{message.timestamp | date}} {{message.userName}}: {{message.contents}}</span>
+        <span>{{message.timestamp | date : 'MM-dd-yyyy HH:MM:SS'}} {{message.userName}}: {{message.contents}}</span>
       </li>
     </ul>
   </div>

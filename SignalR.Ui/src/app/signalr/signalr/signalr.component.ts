@@ -27,6 +27,10 @@ export class SignalrComponent implements OnInit {
   }
 
   public send() {
+    if (!this.dataReadyForSend()) {
+      return;
+    }
+
     const message: SignalrMessage = new SignalrMessage();
     message.clientId = this.uniqueClientId;
     message.messageId = new Date().getTime()
@@ -37,6 +41,17 @@ export class SignalrComponent implements OnInit {
     message.timestamp = new Date();
     this.messages.push(message);
     this.signalrService.sendMsg(message);
+    this.msg = '';
+  }
+
+  public msgKeyup($event: KeyboardEvent) {
+    if ($event.key === 'Enter') {
+      this.send();
+    }
+  }
+
+  public dataReadyForSend(): boolean {
+    return !_.isEmpty(this.userName) && !_.isEmpty(this.msg);
   }
 
   private subscribeToEvents(): void {
